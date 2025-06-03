@@ -40,7 +40,7 @@ R = I_{2nv x 2nv}
 #### Results 
 Demonstration:
 
-![](LQR_Mujoco-2.gif)
+![](LQR_Mujoco.gif)
 
 Simply running the contact visualization python script will not produce the required output. You would need to install the required libraries and also ensure that you have a GPU to run the tutorial script. Furthermore, you will also need to calculate the Q, R and K matrices. Once done with all of it, you can run the visualization script.
 
