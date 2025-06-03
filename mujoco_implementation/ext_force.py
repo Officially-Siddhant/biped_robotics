@@ -8,10 +8,10 @@ TOTAL_ROTATION = 15   # degrees
 CTRL_RATE = 0.8       # seconds
 BALANCE_STD = 0.01    # actuator units
 OTHER_STD = 0.08      # actuator units
-IMPULSE_TIME = 3.0    #seconds
+IMPULSE_TIME = 6.0    #seconds
 IMPULSE_DURATION = 0.01  # one step
 print(model.opt.timestep)
-IMPULSE_FORCE = np.array([200, 0, 0])  # example force in x-direction
+IMPULSE_FORCE = np.array([300, 0, 0])  # example force in x-direction
 
 body_id = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_BODY, b"torso")
 print(mujoco.mj_id2name(model, mujoco.mjtObj.mjOBJ_BODY, body_id))
@@ -19,7 +19,7 @@ print(mujoco.mj_id2name(model, mujoco.mjtObj.mjOBJ_BODY, body_id))
 # Make new camera, set distance.
 camera = mujoco.MjvCamera()
 mujoco.mjv_defaultFreeCamera(model, camera)
-camera.distance = 2.3
+camera.distance = 3.3
 
 # Enable contact force visualisation.
 scene_option = mujoco.MjvOption()
@@ -56,14 +56,14 @@ for i in range(nu):
 # Reset data, set initial pose.
 mujoco.mj_resetData(model, data)
 data.qpos = qpos0
-print("\n This is the sys velocity: ",data.qvel)
 
 # New renderer instance with higher resolution.
 renderer = mujoco.Renderer(model, width=1280, height=720)
 
 
 # --- Setup plotting ---
-plt.ion()
+
+#plt.ion()
 fig, ax = plt.subplots()
 lines = [ax.plot([], [], label=f"Contact {i}")[0] for i in range(4)]
 ax.set_xlim(0, DURATION)
@@ -77,7 +77,9 @@ force_vals = [[] for _ in range(4)]
 
 # --- Main sim loop ---
 frames = []
+
 step = 0
+
 while data.time < DURATION:
 
     # Inject external impulse at a specific time
@@ -98,6 +100,7 @@ while data.time < DURATION:
     mujoco.mj_step(model, data)
 
     # Contact forces
+    
     frame_forces = []
     for i in range(data.ncon):
         contact = data.contact[i]
@@ -112,7 +115,7 @@ while data.time < DURATION:
     for i in range(4):
         force_vals[i].append(frame_forces[i])
         lines[i].set_data(time_vals, force_vals[i])
-    ax.set_xlim(max(0, data.time - 5), data.time + 0.1)
+    #ax.set_xlim(0, DURATION)
     plt.pause(0.001)
 
     # Render
@@ -122,8 +125,9 @@ while data.time < DURATION:
         pixels = renderer.render()
         frames.append(pixels)
 media.show_video(frames, fps=FRAMERATE)
-#plt.ioff()
-#plt.legend(loc='upper right')
-#plt.show()
-  
+
+ax.axvline(x=IMPULSE_TIME, color='red', linestyle='--', label='Impulse start')
+ax.axvline(x=IMPULSE_TIME + IMPULSE_DURATION, color='red', linestyle='--', label='Impulse end')
+ax.legend(loc='upper right')
+
 #fig.savefig("contact_forces.png", dpi=300, bbox_inches="tight")
