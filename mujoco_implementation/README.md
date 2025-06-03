@@ -38,4 +38,11 @@ R = I_{2nv x 2nv}
    \dot M = 0 = MA + A^TM- MBR^{-1}B^T M^T + Q 
    ``` 
 #### Results 
+Demonstration:
+
+![](LQR_Mujoco-2.gif)
+
+Simply running the contact visualization python script will not produce the required output. You would need to install the required libraries and also ensure that you have a GPU to run the tutorial script. Furthermore, you will also need to calculate the Q, R and K matrices. Once done with all of it, you can run the visualization script.
+
+<img src="contact_forces.png" alt="Contact Forces" width="500"/>
 
